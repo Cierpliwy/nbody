@@ -61,13 +61,16 @@ impl<'a> BodyRenderer<'a> {
     pub fn draw<S: Surface>(&mut self, surface: &mut S, scene: &Scene, bodies: &[Body]) {
         // Set model view projection and uniforms
         let mvp = scene.projection * scene.view;
-        let uniforms = uniform! { mvp: Into::<[[f32; 4]; 4]>::into(mvp)};
+        let uniforms = uniform! {
+            mvp: Into::<[[f32; 4]; 4]>::into(mvp),
+            res: [scene.width, scene.height]
+        };
 
         // Convert bodies to BodyVertices.
-        let mut vertices : Vec<BodyVertex> = bodies.iter().map(|&body| BodyVertex {
+        let mut vertices: Vec<BodyVertex> = bodies.iter().map(|&body| BodyVertex {
             position: body.position.into(),
             color: body.color.into(),
-            radius: body.radius()
+            radius: body.radius(),
         }).collect();
 
         if bodies.len() > self.max_bodies {
