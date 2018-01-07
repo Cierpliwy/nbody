@@ -3,7 +3,6 @@ use super::super::simulation::Body;
 use super::scene::Scene;
 use std::cmp::Ordering;
 use cgmath::Vector4;
-use cgmath::prelude::*;
 
 #[derive(Copy, Clone)]
 struct BodyVertex {
@@ -81,8 +80,8 @@ impl<'a> BodyRenderer<'a> {
         vertices.sort_by(|v1, v2| {
             let v1 = v1.position;
             let v2 = v2.position;
-            let mut v1 = scene.view * Vector4::new(v1[0], v1[1], v1[2], 1.0);
-            let mut v2 = scene.view * Vector4::new(v2[0], v2[1], v2[2], 1.0);
+            let v1 = scene.view * Vector4::new(v1[0], v1[1], v1[2], 1.0);
+            let v2 = scene.view * Vector4::new(v2[0], v2[1], v2[2], 1.0);
             v1.z.partial_cmp(&v2.z).unwrap_or(Ordering::Less)
         });
 

@@ -9,17 +9,26 @@ struct SceneParams {
 }
 
 pub struct Scene {
+    // Initial params
     pub width: f32,
     pub height: f32,
+    pub near: f32,
+    pub far: f32,
+
+    // Calculated
     pub projection: Matrix4<f32>,
     pub view: Matrix4<f32>,
+
+    // Interpolated
     old_params: SceneParams,
     new_params: SceneParams,
+
+    // Last change
     params_change_time: f64,
 }
 
 impl Scene {
-    pub fn new(width: f32, height: f32, look_at: Vector3<f32>, camera: Vector3<f32>) -> Self {
+    pub fn new(width: f32, height: f32, near: f32, far: f32, look_at: Vector3<f32>, camera: Vector3<f32>) -> Self {
         let params = SceneParams {
             look_at,
             camera,
@@ -28,6 +37,8 @@ impl Scene {
         let mut scene = Scene {
             width,
             height,
+            near,
+            far,
             old_params: params,
             new_params: params,
             projection: Matrix4::identity(),
@@ -51,7 +62,7 @@ impl Scene {
 
     pub fn update(&mut self) {
         let SceneParams { look_at, camera } = self.calculate();
-        self.projection = perspective(Rad::from(Deg(45.0)), self.width / self.height, 1.0, 100.0);
+        self.projection = perspective(Rad::from(Deg(45.0)), self.width / self.height, self.near, self.far);
         self.view = Matrix4::look_at(Point3::from_vec(camera), Point3::from_vec(look_at), Vector3::new(0.0, 1.0, 0.0));
     }
 

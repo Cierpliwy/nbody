@@ -1,5 +1,4 @@
 use cgmath::Vector3;
-use cgmath::prelude::*;
 use rand::{Rand, Rng};
 
 #[derive(Copy, Clone)]

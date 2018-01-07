@@ -4,7 +4,8 @@ extern crate rand;
 extern crate cgmath;
 extern crate time;
 
-use glium::glutin::{EventsLoop, WindowBuilder, ContextBuilder, Event, WindowEvent, KeyboardInput, ElementState, VirtualKeyCode};
+use glium::glutin::{EventsLoop, WindowBuilder, ContextBuilder, Event, WindowEvent, KeyboardInput,
+                    ElementState, VirtualKeyCode};
 use glium::{Display, Surface};
 use cgmath::Vector3;
 use renderer::scene::Scene;
@@ -20,7 +21,13 @@ fn main() {
     let mut rng = rand::thread_rng();
 
     // Configure scene.
-    let mut scene = Scene::new(800.0, 600.0, Vector3::new(0.0, 0.0, 0.0), Vector3::new(0.0, 0.0, 3.0));
+    let mut scene = Scene::new(
+        800.0,
+        600.0,
+        1.0,
+        100.0,
+        Vector3::new(0.0, 0.0, 0.0),
+        Vector3::new(0.0, 0.0, 3.0));
 
     // Configure window with context
     let mut events_loop = EventsLoop::new();
@@ -29,11 +36,12 @@ fn main() {
     let context = ContextBuilder::new()
         .with_vsync(true)
         .with_depth_buffer(24);
-    let display = Display::new(window, context, &events_loop).expect("Couldn't create display");
+    let display = Display::new(window, context, &events_loop)
+        .expect("Couldn't create display");
 
     // Create initial bodies.
     let mut bodies: Vec<Body> = Vec::new();
-    for i in 0..200 {
+    for _ in 0..200 {
         bodies.push(rng.gen::<Body>());
     }
 
@@ -54,9 +62,15 @@ fn main() {
                             scene.set_width_and_height(width as f32, height as f32);
                             display.gl_window().window().set_inner_size(width, height);
                         }
-                        WindowEvent::KeyboardInput { input: KeyboardInput { virtual_keycode: Some(VirtualKeyCode::Space), state: ElementState::Pressed, .. }, .. } => {
+                        WindowEvent::KeyboardInput {
+                            input: KeyboardInput {
+                                virtual_keycode: Some(VirtualKeyCode::Space),
+                                state: ElementState::Pressed, ..
+                            }, ..
+                        } => {
                             // FixMe: Temporarily set random camera position
-                            scene.set_camera((rng.gen::<Vector3<f32>>() - Vector3::new(0.5, 0.5, 0.5)) * 10.0, true);
+                            scene.set_camera((rng.gen::<Vector3<f32>>() -
+                                Vector3::new(0.5, 0.5, 0.5)) * 10.0, true);
                         }
                         _ => {}
                     }

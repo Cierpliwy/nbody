@@ -4,8 +4,8 @@ in vec4 position;
 in vec4 center;
 in vec3 color;
 in float radius;
+in float scale;
 
-uniform vec2 res;
 uniform mat4 projection;
 
 void main() {
@@ -15,9 +15,8 @@ void main() {
         float height = sqrt(radius*radius - diff.x*diff.x - diff.y*diff.y);
         vec4 screen = projection * vec4(position.x, position.y, position.z + height, position.w);
         screen /= screen.w;
-        float depth = screen.z * 0.5 + 0.5;
-        gl_FragColor = vec4(color * height / radius, 1.0);
-        gl_FragDepth = depth;
+        gl_FragColor = vec4(color * height / radius, (radius - len) * 512.0 * scale);
+        gl_FragDepth = screen.z * 0.5 + 0.5;
     } else {
         gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
         gl_FragDepth = 1.0;
