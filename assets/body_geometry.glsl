@@ -15,29 +15,28 @@ out vec4 center;
 out vec3 color;
 out float radius;
 
-uniform vec2 res;
+uniform mat4 projection;
 
 void main()
 {
-    float aspect = res.x / res.y;
     center = inData[0].position;
     color = inData[0].color;
     radius = inData[0].radius;
 
-    position = center + vec4(-radius, -radius * aspect, 0.0, 0.0);
-    gl_Position = position;
+    position = center + vec4(-radius, -radius, 0.0, 0.0);
+    gl_Position = projection * position;
     EmitVertex();
 
-    position = center + vec4(radius, -radius * aspect, 0.0, 0.0);
-    gl_Position = position;
+    position = center + vec4(radius, -radius, 0.0, 0.0);
+    gl_Position = projection * position;
     EmitVertex();
 
-    position = center + vec4(-radius, radius * aspect, 0.0, 0.0);
-    gl_Position = position;
+    position = center + vec4(-radius, radius, 0.0, 0.0);
+    gl_Position = projection * position;
     EmitVertex();
 
-    position = center + vec4(radius, radius * aspect, 0.0, 0.0);
-    gl_Position = position;
+    position = center + vec4(radius, radius, 0.0, 0.0);
+    gl_Position = projection * position;
     EmitVertex();
 
     EndPrimitive();

@@ -11,12 +11,11 @@ out VertexData
   float radius;
 } outData;
 
-uniform mat4 mvp;
+uniform mat4 projection;
+uniform mat4 view;
 
 void main() {
-    vec4 p = mvp * vec4(position, 1.0);
-    vec4 p2 = mvp * vec4(position + vec3(radius, 0.0, 0.0), 1.0);
-    outData.position = p / p.w;
+    outData.position = view * vec4(position, 1.0);
     outData.color = color;
-    outData.radius = length(p2 / p2.w - p / p.w);
+    outData.radius = radius;
 }

@@ -6,18 +6,20 @@ in vec3 color;
 in float radius;
 
 uniform vec2 res;
+uniform mat4 projection;
 
 void main() {
-    vec4 diff = center - position;
-    diff.y *= res.y/res.x;
+    vec4 diff = position-center;
     float len = length(diff);
     if (len < radius) {
-        float height = sqrt(radius*radius - len*len);
-        float relativeHeight = height / len;
-        gl_FragDepth = (position.z - height + 1.0) / 2.0;
-        gl_FragColor = vec4(color * relativeHeight, (radius - len) * res.x / 8.0);
+        float height = sqrt(radius*radius - diff.x*diff.x - diff.y*diff.y);
+        vec4 screen = projection * vec4(position.x, position.y, position.z + height, position.w);
+        screen /= screen.w;
+        float depth = screen.z * 0.5 + 0.5;
+        gl_FragColor = vec4(color * height / radius, 1.0);
+        gl_FragDepth = depth;
     } else {
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
         gl_FragDepth = 1.0;
     }
 }

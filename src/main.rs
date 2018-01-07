@@ -33,7 +33,7 @@ fn main() {
 
     // Create initial bodies.
     let mut bodies: Vec<Body> = Vec::new();
-    for i in 0..100 {
+    for i in 0..200 {
         bodies.push(rng.gen::<Body>());
     }
 
@@ -56,7 +56,7 @@ fn main() {
                         }
                         WindowEvent::KeyboardInput { input: KeyboardInput { virtual_keycode: Some(VirtualKeyCode::Space), state: ElementState::Pressed, .. }, .. } => {
                             // FixMe: Temporarily set random camera position
-                            scene.set_camera(rng.gen::<Vector3<f32>>() * 3.0, true);
+                            scene.set_camera((rng.gen::<Vector3<f32>>() - Vector3::new(0.5, 0.5, 0.5)) * 10.0, true);
                         }
                         _ => {}
                     }
