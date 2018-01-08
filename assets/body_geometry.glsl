@@ -14,7 +14,7 @@ out vec4 position;
 out vec4 center;
 out vec3 color;
 out float radius;
-out float scale;
+out float blur;
 
 uniform vec2 res;
 uniform mat4 projection;
@@ -29,7 +29,7 @@ void main()
     s1 /= s1.w;
     vec4 s2 = projection * (center + vec4(1.0, 0.0, 0.0, 0.0));
     s2 /= s2.w;
-    scale = (s2.x - s1.x) * res.y / res.x;
+    blur = (s2.x - s1.x) * res.x / res.y * 2.0;
 
     position = center + vec4(-radius, -radius, 0.0, 0.0);
     gl_Position = projection * position;
