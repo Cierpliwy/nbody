@@ -8,7 +8,7 @@ use glium::glutin::{EventsLoop, WindowBuilder, ContextBuilder, Event, WindowEven
                     ElementState, VirtualKeyCode};
 use glium::{Display, Surface};
 use cgmath::Vector3;
-use renderer::scene::Scene;
+use renderer::scene::{Scene, SceneParams};
 use renderer::body::BodyRenderer;
 use simulation::Body;
 use rand::Rng;
@@ -24,15 +24,18 @@ fn main() {
     let mut scene = Scene::new(
         800.0,
         600.0,
-        1.0,
-        100.0,
-        Vector3::new(0.0, 0.0, 0.0),
-        Vector3::new(0.0, 0.0, 3.0));
+        SceneParams {
+            near: 1.0,
+            far: 100.0,
+            focus: 100.0,
+            look_at: Vector3::new(0.0, 0.0, 0.0),
+            camera: Vector3::new(0.0, 0.0, 3.0),
+        });
 
     // Configure window with context
     let mut events_loop = EventsLoop::new();
     let window = WindowBuilder::new()
-        .with_dimensions(scene.width as u32, scene.height as u32);
+        .with_dimensions(scene.get_width() as u32, scene.get_height() as u32);
     let context = ContextBuilder::new()
         .with_vsync(true)
         .with_depth_buffer(24);
@@ -41,8 +44,10 @@ fn main() {
 
     // Create initial bodies.
     let mut bodies: Vec<Body> = Vec::new();
-    for _ in 0..200 {
-        bodies.push(rng.gen::<Body>());
+    for _ in 0..50000 {
+        let mut body = rng.gen::<Body>();
+        body.position *= 100.0;
+        bodies.push(body);
     }
 
     // Configure renderers.
@@ -64,13 +69,22 @@ fn main() {
                         }
                         WindowEvent::KeyboardInput {
                             input: KeyboardInput {
-                                virtual_keycode: Some(VirtualKeyCode::Space),
+                                virtual_keycode: Some(VirtualKeyCode::A),
                                 state: ElementState::Pressed, ..
                             }, ..
                         } => {
-                            // FixMe: Temporarily set random camera position
+                            let far = scene.get_params().far;
                             scene.set_camera((rng.gen::<Vector3<f32>>() -
-                                Vector3::new(0.5, 0.5, 0.5)) * 10.0, true);
+                                Vector3::new(0.5, 0.5, 0.5)) * far, true);
+                        }
+                        WindowEvent::KeyboardInput {
+                            input: KeyboardInput {
+                                virtual_keycode: Some(VirtualKeyCode::S),
+                                state: ElementState::Pressed, ..
+                            }, ..
+                        } => {
+                            let far = scene.get_params().far;
+                            scene.set_focus(rng.gen::<f32>() * far, true);
                         }
                         _ => {}
                     }

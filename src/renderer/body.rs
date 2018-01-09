@@ -59,10 +59,16 @@ impl<'a> BodyRenderer<'a> {
 
     pub fn draw<S: Surface>(&mut self, surface: &mut S, scene: &Scene, bodies: &[Body]) {
         // Set model view projection and uniforms
+        let params = scene.get_params();
+        let view_look_at = scene.get_view() * params.look_at.extend(1.0);
         let uniforms = uniform! {
-            projection: Into::<[[f32; 4]; 4]>::into(scene.projection),
-            view: Into::<[[f32; 4]; 4]>::into(scene.view),
-            res: [scene.width, scene.height]
+            projection: Into::<[[f32; 4]; 4]>::into(scene.get_projection()),
+            view: Into::<[[f32; 4]; 4]>::into(scene.get_view()),
+            res: [scene.get_width(), scene.get_height()],
+            look_at: Into::<[f32; 4]>::into(view_look_at),
+            focus: params.focus,
+            far: params.far,
+            near: params.near
         };
 
         // Convert bodies to BodyVertices.
@@ -80,8 +86,8 @@ impl<'a> BodyRenderer<'a> {
         vertices.sort_by(|v1, v2| {
             let v1 = v1.position;
             let v2 = v2.position;
-            let v1 = scene.view * Vector4::new(v1[0], v1[1], v1[2], 1.0);
-            let v2 = scene.view * Vector4::new(v2[0], v2[1], v2[2], 1.0);
+            let v1 = scene.get_view() * Vector4::new(v1[0], v1[1], v1[2], 1.0);
+            let v2 = scene.get_view() * Vector4::new(v2[0], v2[1], v2[2], 1.0);
             v1.z.partial_cmp(&v2.z).unwrap_or(Ordering::Less)
         });
 
